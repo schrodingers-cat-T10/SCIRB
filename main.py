@@ -33,8 +33,8 @@ def preprocess_input(data, model_type):
         if col in data.columns:
             data[col] = encoder.fit_transform(data[col])
 
-    # Date processing (if applicable)
-    if "PUB_DATE" in data.columns:  # Assuming PUB_DATE is not in the provided columns
+
+    if "PUB_DATE" in data.columns:  
         data["PUB_DATE"] = pd.to_datetime(data["PUB_DATE"], format="%Y%m%d")
         data["month"] = data["PUB_DATE"].dt.month
         data["day"] = data["PUB_DATE"].dt.day
