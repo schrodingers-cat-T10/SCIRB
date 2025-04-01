@@ -19,12 +19,12 @@ from langchain_core.prompts import ChatPromptTemplate
 import os
 import pandas as pd
 
-# Load the saved models with custom objects
+
 linear_model = load_model("linear.h5", custom_objects={"mae": MeanAbsoluteError()})
 cat_model = load_model("cat.h5", custom_objects={"mae": MeanAbsoluteError()})
 regression_model = load_model("regressions1.h5", custom_objects={"mae": MeanAbsoluteError()})
 
-# Function to preprocess input data for each model
+
 def preprocess_input(data, model_type):
     categorical_columns = ["BORO", "MANAGING_AGCY", "PROJECT_DESCR", "PROJECT_ID", "COMMUNITY_BOARD",
                            "TYP_CATEGORY_NAME", "BUDGET_LINE", "DELAY_DESC", "SITE_DESCR"]
@@ -47,7 +47,7 @@ def preprocess_input(data, model_type):
     scaler = StandardScaler()
     xdata = scaler.fit_transform(xdata)
 
-    # Reshape for LSTM: (batch_size, timesteps, features)
+  
     xdata = np.array(xdata).reshape((xdata.shape[0], 1, xdata.shape[1]))
 
     return xdata, scaler
@@ -84,11 +84,11 @@ st.markdown(
 st.sidebar.title("Navigation")
 page = st.sidebar.radio(
     "Go to",
-    ["🏠 Dashboard", "📊 Prediction", "🤖 Chatbot"],
+    [" Dashboard", "Prediction", "Chatbot"],
     key="navigation"
 )
 
-if page == "🏠 Dashboard":
+if page == " Dashboard":
     st.title("Dashboard")
     st.write("Welcome to the Dashboard page! Explore insights and trends in project data.")
 
@@ -119,9 +119,6 @@ if page == "🏠 Dashboard":
             key="visualization_selectbox"
         )
 
-        # Key Visualizations
-
-        # 1. Projects by Borough (Bar Chart)
         if visualization_option == "Projects by Borough":
             st.subheader("Projects by Borough")
             borough_counts = data["BORO"].value_counts().reset_index()
@@ -129,14 +126,13 @@ if page == "🏠 Dashboard":
             fig1 = px.bar(borough_counts, x="Borough", y="Number of Projects", color="Borough", title="Number of Projects by Borough")
             st.plotly_chart(fig1, use_container_width=True)
 
-        # 2. Budget Allocation Over Time (Line Chart)
         elif visualization_option == "Budget Allocation Over Time":
             st.subheader("Budget Allocation Over Time")
             budget_over_time = data.groupby("year")["ORIG_BUD_AMT"].sum().reset_index()
             fig2 = px.line(budget_over_time, x="year", y="ORIG_BUD_AMT", title="Budget Allocation Over Time")
             st.plotly_chart(fig2, use_container_width=True)
 
-        # 3. Project Delays (Pie Chart)
+
         elif visualization_option == "Project Delays":
             st.subheader("Project Delays")
             delay_counts = data["DELAY_DESC"].value_counts().reset_index()
@@ -144,7 +140,7 @@ if page == "🏠 Dashboard":
             fig3 = px.pie(delay_counts, values="Count", names="Status", title="Percentage of Delayed vs On-Time Projects")
             st.plotly_chart(fig3, use_container_width=True)
 
-        # 4. Budget Distribution by Project Type (Box Plot)
+ 
         elif visualization_option == "Budget Distribution by Project Type":
             st.subheader("Budget Distribution by Project Type")
             fig4 = px.box(data, x="TYP_CATEGORY_NAME", y="ORIG_BUD_AMT", color="TYP_CATEGORY_NAME", title="Budget Distribution by Project Type")
@@ -267,10 +263,9 @@ elif page == "📊 Prediction":
                 # LIME Explanation
                 st.subheader("LIME Explanation")
                 explainer = lime.lime_tabular.LimeTabularExplainer(
-                    training_data=np.zeros((1, xdata.shape[2])),  # Dummy data for LIME
+                    training_data=xdata,  
                     mode="regression",
                     feature_names=input_data.columns,
-                    verbose=True,
                     discretize_continuous=True
                 )
                 exp = explainer.explain_instance(
