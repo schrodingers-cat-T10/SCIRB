@@ -262,7 +262,7 @@ elif page == "📊 Prediction":
 
                 # LIME Explanation
                 st.subheader("LIME Explanation")
-                explainer = lime.lime_tabular.LimeTabularExplainer(
+                explainer = lime.lime_tabular.RecurrentTabularExplainer(
                     training_data=xdata,  
                     mode="regression",
                     feature_names=input_data.columns,
